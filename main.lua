@@ -6,10 +6,14 @@ startTowerPos = 125
 endTowerPos = 125 + 10*50 + 10
 
 --Platform data
-platformLength = 50
 platformX = {}
 platformY = {}
 platformMovingRight = {}
+platformLength = {}
+platformDetractLength = {}
+platformDetractStarted = {}
+
+platformMaxDecreaseLength = 5
 
 function love.load()
     getBrickImages()
@@ -75,7 +79,7 @@ end
 
 function drawPlatforms()
     for i=1,#platformX do
-        love.graphics.rectangle("fill",platformX[i],platformY[i],platformLength,10)
+        love.graphics.rectangle("fill",platformX[i],platformY[i],platformLength[i],10)
     end
 end
 
@@ -84,6 +88,9 @@ function addPlatforms(range)
         table.insert(platformX, startTowerPos + i * 50)
         print(platformX[i])
         table.insert(platformY, i * 50)
+        table.insert(platformLength, 50)
+        table.insert(platformDetractLength,false)
+        table.insert(platformDetractStarted,false)
     end
 
     for i=1,#platformX do
@@ -105,13 +112,47 @@ function addPlatforms(range)
 end
 
 function updatePlatforms()
-    --updatePlatformPositions()
+    updatePlatformPositions()
 end
 
 function updatePlatformPositions()
     for i=1,#platformX do
-        if platformX[i] < endTowerPos and platformMovingRight[i] == true then
-            platformX[i] = platformX[i] + 1.1
-        end
+
+        arePlatformsAtBoundaries(i)
+
+        movePlatforms(i)
+
+    end
+end
+
+function arePlatformsAtBoundaries(i)
+    if platformX[i] >= 635 and platformX[i] < 636.5 then
+        platformMovingRight[i] = false
+        -- if platformDetractStarted[i] == false then
+        --     platformDetractStarted[i] = true
+        --     platformDetractLength[i] = true
+        -- end
+
+        -- if platformDetractStarted[i] == false then
+        --     platformMovingRight[i] = false
+        -- end
+    end
+
+    if platformX[i] >= 124 and platformX[i] < 125.5 then
+        platformMovingRight[i] = true     
+    --     if platformDetractStarted[i] == false then
+    --         platformDetractLength[i] = true
+    --         platformDetractLength[i] = true
+    --     end
+    end
+end
+
+function movePlatforms(i)
+    if platformX[i] < endTowerPos and platformMovingRight[i] == true then
+        platformX[i] = platformX[i] + 1.1
+    end
+
+    if platformX[i] > startTowerPos and platformMovingRight[i] == false then
+        platformX[i] = platformX[i] - 1.1
     end
 end
